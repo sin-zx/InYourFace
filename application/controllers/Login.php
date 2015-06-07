@@ -101,17 +101,28 @@ class Login extends CI_Controller {
         echo UNKNOWN_ERR;
         echo NORMAL;
 	}
-    function sendmail(){
-
+    function sendemail(){
+        $config = array();
+//        $config['useragent']           = "CodeIgniter";
+//        $config['mailpath']            = "/usr/bin/sendmail"; // or "/usr/sbin/sendmail"
+        $config['mailtype'] = 'text';
+        $config['protocol']    = 'smtp';
+        $config['smtp_port']   =  25;
+        $config['smtp_host']   = 'smtp.qq.com';
+        $config['smtp_user']   = '525114969@qq.com';
+        $config['smtp_pass']   = 'cherish941026';
         $this->load->library('email');
-        $this->email->from('inyourfaceapp@163.com', '来自猩猩的小队');
-        $this->email->to('525114969@qq.com');
-        $this->email->cc('525114969@qq.com');
-        $this->email->bcc('525114969@qq.com');
+        $this->email->initialize($config);
+
+        $this->email->from('525114969@qq.com', '来自猩猩的小队');
+        $this->email->to('sin_112233@163.com');
+        $this->email->cc('554659766@qq.com');
+       //$this->email->bcc('525114969@qq.com');
         $this->email->subject('Email Test');
         $this->email->message('message ');
 
         var_dump( $this->email->send());
+        echo $this->email->print_debugger();
     }
 
 	//注销登陆

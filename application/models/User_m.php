@@ -35,36 +35,59 @@
 				return true;
 			}
 		}
-        function checklogin($name,$psw){
-            $query_name = $this->db->get_where('user_main', array('name' => $name));
-            $result = $query_name->result();
-            if(empty($result)){
-                return 0;
-            }
-            if($result[0]->psw == $psw){
-                return 1;
-            }
-        }
-
-        function getcheck($name){
+		function getID($name){
+			$query_name = $this->db->get_where('user_main', array('name' => $name));
+			$result = $query_name->result();
+			return $result[0]->id;
+		}
+        
+		//修改激活状态
+        function getcheck($id){
             $arr=array('isCheck'=>1);
-            $this->db->where('name',$name);
+            $this->db->where('id',$id);
             $this->db->update('user_main',$arr);
         }
-        function check_name($name){
-            $query_name = $this->db->get_where('user_main', array('name' => $name));
-            $result = $query_name->result();
+        function check_id($id){
+            $query_id = $this->db->get_where('user_main', array('id' => $id));
+            $result = $query_id->result();
             return $result;
         }
 
+        //验证用户登录
+       	function check_login($type,$u_name,$u_psw){
+       		$arr = array();
+	        $arr['isCheck']=0;
+	        if($type == 1){
+	        	$query = $this->db->get_where('user_main', array('name' => $u_name));
+	        }else if($type == 2){
+	        	$query = $this->db->get_where('user_main', array('mail' => $u_name));
+	        }
+       		
+            $result = $query->result();
+            
+            if(empty($result)){
+            	$arr['status']=102;
+            }else{
+            	$name = $result[0]->name;
+	            $psw = $result[0]->psw;
+	            
+            	if($psw == $u_psw){
+            		$arr['status']=101;
+            		$isCheck = $result[0]->isCheck;
+            		$arr['isCheck']=intval($isCheck);
+            	}else{
+            		$arr['status']=103;
+            	}
+            }
+            return $arr;
+
+
+       	}
 
 
 
-		function test(){
-			$query_name = $this->db->get_where('user_main', array('name' => 'xzx'));
-			return $query_name->result();
-			
-		}
+
+
 
 		function m_get($key,$n,$nvalue)
 		{

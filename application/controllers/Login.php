@@ -5,22 +5,13 @@ class Login extends CI_Controller {
 	function __construct()
 		{
 			parent::__construct();
-            header('Content-type: application/json');   //设置数据格式为json
-
-			//session_start();
-			// {
-			// 	header("Location: ".site_url());
-			// }
+            header('Content-type: application/json;charset=utf-8');   //设置数据格式为json
 		}
 	function index()
 	{		
-		/*
-		$json=file_get_contents("php://input");
-		$data  = json_decode($json,true);
-		$name = $data['name'];
-		$psw = $data['psw'];
-		*/
+		//
 	}
+
 
     //注册
 	function register(){
@@ -45,19 +36,16 @@ class Login extends CI_Controller {
 
             //$this->load->library('encrypt');
            // $encrypt_name = $this->encrypt->encode($name);  //对用户名加密后作为激活链接后缀
-            $encrypt_name=$name;
+            
 
             //发送邮件
-            $this->load->library('email');
-            $this->email->from('inyourfaceapp@163.com', '来自猩猩的小队');
-            $this->email->to($email);
-          //$this->email->cc('525114969@qq.com');
-           //$this->email->bcc('inyourfaceapp@163.com');
-            $this->email->subject('验证你的InYourFace账号');
-            $msg = '<h1>请点击以下链接激活您的账号:</h1>'.'http://119.29.58.57/inyourface/login/checkemail'.'/'.$encrypt_name;
-            $this->email->message($msg);
+            $encrypt_name=md5($name);
+            $id = $this->user_m->getID($name);
+            $link = 'http://119.29.58.57/inyourface/login/checkemail'.'/'.$id.'/'.$encrypt_name;
+            $this->load->helper('mailer');
+            $send_result = send_mailer($email,$link);
 
-            if(!$this->email->send()){
+            if(!$send_result){
                 $checkinfo = 2;
             }
         }
@@ -65,26 +53,29 @@ class Login extends CI_Controller {
 		echo json_encode($info);
 	}
 
+
     //接收激活邮箱请求
-    function checkemail($str){
+    function checkemail($id,$nameA){
 //        $this->load->library('encrypt');
 //        $name = $this->encrypt->decode($str);
-        $name = $str;
         $this->load->model('user_m');
-        $result = $this->user_m->check_name($name);
+        $result = $this->user_m->check_id($id);
         if(empty($result)){
             die("用户名不存在");
         }
+
         if($result[0]->isCheck == 1){
             die('你已经激活！无需重复激活');
         }
 
-        if(!$this->user_m->getcheck($name)){
+        if(!$this->user_m->getcheck($id)){
             echo '验证失败！服务器繁忙请稍后重试';
         }else{
             echo '验证成功！欢迎来到InYourFace！';
         }
     }
+
+    //登陆
     function start()
     {
         $json=file_get_contents("php://input");
@@ -94,20 +85,28 @@ class Login extends CI_Controller {
             exit();
         }
         $data  = json_decode($json,true);
+        $name=$data['name'];
+        $psw=$data['psw'];
+        $type=intval($data['type']);
+        $this->load->model('user_m');
+        
+        $checklogin = $this->user_m->check_login($type,$name,$psw);
+        echo json_encode($checklogin);
     }
 
 	function test(){
 
-        echo UNKNOWN_ERR;
-        echo NORMAL;
+        $this->load->helper('mailer');
+        send_mailer();
+
 	}
     function sendemail(){
         $config = array();
-//        $config['useragent']           = "CodeIgniter";
-//        $config['mailpath']            = "/usr/bin/sendmail"; // or "/usr/sbin/sendmail"
+        $config['useragent']           = "CodeIgniter";
+        $config['mailpath']            = "/usr/sbin/sendmail"; // or "/usr/sbin/sendmail"
         $config['mailtype'] = 'text';
         $config['protocol']    = 'smtp';
-        $config['smtp_port']   =  25;
+        $config['smtp_port']   =  587;
         $config['smtp_host']   = 'smtp.qq.com';
         $config['smtp_user']   = '525114969@qq.com';
         $config['smtp_pass']   = 'cherish941026';

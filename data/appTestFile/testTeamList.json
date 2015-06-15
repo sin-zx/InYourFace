@@ -1,0 +1,8 @@
+[
+{"id" : 7, "sex" : 1, "name" : "银河护卫队", "level": 1 ,"wintimes": 80},
+{"id" : 6, "sex" : 1, "name" : "森林狼队", "level": 5 ,"wintimes": 20},
+{"id" : 5, "sex" : 1, "name" : "来自猩猩球队", "level": 4 ,"wintimes": 40},
+{"id" : 4, "sex" : 1, "name" : "ABC队", "level": 2 ,"wintimes": 30},
+{"id" : 3, "sex" : 1, "name" : "WINWIN", "level": 4 ,"wintimes": 20},
+{"id" : 2, "sex" : 1, "name" : "HE2333", "level": 3 ,"wintimes": 10}
+]

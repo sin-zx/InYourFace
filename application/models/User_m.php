@@ -28,15 +28,25 @@
 
 		//将注册信息入库
 		function register($data){
-			$query=$this->db->insert('user_main', $data); 
+            $arr = array();
+            $arr['name'] = $data['name'];
+            $arr['sex'] = $data['sex'];
+            $arr['psw'] = $data['psw'];
+            $arr['mail'] = $data['mail'];
+			$query=$this->db->insert('user_main', $arr);
 			if(!$query){
 				return false;
 			}else{
 				return true;
 			}
 		}
-		function getID($name){
-			$query_name = $this->db->get_where('user_main', array('name' => $name));
+		function getID($name,$type = 1){
+            if($type == 2){
+                $type = 'mail';
+            }else{
+                $type = 'name';
+            }
+			$query_name = $this->db->get_where('user_main', array($type => $name));
 			$result = $query_name->result();
 			return $result[0]->id;
 		}
@@ -52,11 +62,11 @@
             $result = $query_id->result();
             return $result;
         }
-
         //验证用户登录
        	function check_login($type,$u_name,$u_psw){
        		$arr = array();
-	        $arr['isCheck']=0;
+
+            //登陆类型
 	        if($type == 1){
 	        	$query = $this->db->get_where('user_main', array('name' => $u_name));
 	        }else if($type == 2){
@@ -74,7 +84,12 @@
             	if($psw == $u_psw){
             		$arr['status']=101;
             		$isCheck = $result[0]->isCheck;
-            		$arr['isCheck']=intval($isCheck);
+                    if($isCheck == 0){
+                        $arr['other'] = 'notCheck';
+                    }else{
+                        $arr['other'] = 0;
+                    }
+
             	}else{
             		$arr['status']=103;
             	}

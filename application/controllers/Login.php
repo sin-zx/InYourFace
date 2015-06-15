@@ -26,7 +26,6 @@ class Login extends CI_Controller {
 		$psw=$data['psw'];
 		$sex=$data['sex'];
 		$email=$data['mail'];
-
 		$this->load->model('user_m');
 		$checkinfo = $this->user_m->check_repeat($name,$email);
 		if($checkinfo==1){
@@ -87,19 +86,38 @@ class Login extends CI_Controller {
         $data  = json_decode($json,true);
         $name=$data['name'];
         $psw=$data['psw'];
-        $type=intval($data['type']);
+
+        //判断登录名是否为邮箱格式
+        if( preg_match("/^[-a-zA-Z0-9_.]+@([0-9A-Za-z][0-9A-Za-z-]+\.)+[A-Za-z]{2,5}$/",$name) ){
+            $type = 2;
+        }else{
+            $type = 1;
+        }
         $this->load->model('user_m');
-        
         $checklogin = $this->user_m->check_login($type,$name,$psw);
+        if($checklogin['other'] == 0){
+            $id = $this->user_m->getID($name,$type);
+            $checklogin['other'] = (string)$id;
+        }
         echo json_encode($checklogin);
     }
 
+    function resend_mail(){
+        $json=file_get_contents("php://input");
+        $data  = json_decode($json,true);
+        $name=$data['name'];
+        $psw=$data['psw'];
+        $type=intval($data['type']);
+        $this->load->model('user_m');
+        
+    }
 	function test(){
 
         $this->load->helper('mailer');
         send_mailer();
 
 	}
+
     function sendemail(){
         $config = array();
         $config['useragent']           = "CodeIgniter";
@@ -130,7 +148,4 @@ class Login extends CI_Controller {
 		session_destroy();
 		header(site_url());
 	}
-
-	
-
 }

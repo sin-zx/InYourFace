@@ -17,8 +17,9 @@ class Login extends CI_Controller {
 	function register(){
 		$json=file_get_contents("php://input");
 		if(!isset($json)){
-			$info= array('status' => 5);
-			echo json_encode($info);
+			$info= array('status' => 10000);
+            $arr['head'] = $info;
+			echo json_encode($arr);
 			exit();
 		}
         $data  = json_decode($json,true);
@@ -28,9 +29,9 @@ class Login extends CI_Controller {
 		$email=$data['mail'];
 		$this->load->model('user_m');
 		$checkinfo = $this->user_m->check_repeat($name,$email);
-		if($checkinfo==1){
+		if($checkinfo==101){
 			if(!$this->user_m->register($data)){
-				$checkinfo=2;
+				$checkinfo=102;
 			}
 
             //$this->load->library('encrypt');
@@ -45,18 +46,17 @@ class Login extends CI_Controller {
             $send_result = send_mailer($email,$link);
 
             if(!$send_result){
-                $checkinfo = 2;
+                $checkinfo = 102;
             }
         }
-		$info= array('status' => $checkinfo);
-		echo json_encode($info);
+		$info= array('status' => $checkinfo,'type'=>1);
+        $arr['head'] = $info;
+		echo json_encode($arr);
 	}
 
 
     //接收激活邮箱请求
     function checkemail($id,$nameA){
-//        $this->load->library('encrypt');
-//        $name = $this->encrypt->decode($str);
         $this->load->model('user_m');
         $result = $this->user_m->check_id($id);
         if(empty($result)){
@@ -66,7 +66,6 @@ class Login extends CI_Controller {
         if($result[0]->isCheck == 1){
             die('你已经激活！无需重复激活');
         }
-
         if(!$this->user_m->getcheck($id)){
             echo '验证失败！服务器繁忙请稍后重试';
         }else{
@@ -79,8 +78,9 @@ class Login extends CI_Controller {
     {
         $json=file_get_contents("php://input");
         if(!isset($json)){
-            $info= array('status' => 5);
-            echo json_encode($info);
+            $info= array('status' => 10000);
+            $arr['head'] = $info;
+            echo json_encode($arr);
             exit();
         }
         $data  = json_decode($json,true);
@@ -101,7 +101,9 @@ class Login extends CI_Controller {
                 $checklogin['other'] = (string)$id;
             }
         }
-        echo json_encode($checklogin);
+        $checklogin['type'] = 2;
+        $arr['head'] = $checklogin;
+        echo json_encode($arr);
     }
 
     function resend_mail(){
@@ -112,36 +114,6 @@ class Login extends CI_Controller {
         $type=intval($data['type']);
         $this->load->model('user_m');
         
-    }
-	function test(){
-
-        $this->load->helper('mailer');
-        send_mailer();
-
-	}
-
-    function sendemail(){
-        $config = array();
-        $config['useragent']           = "CodeIgniter";
-        $config['mailpath']            = "/usr/sbin/sendmail"; // or "/usr/sbin/sendmail"
-        $config['mailtype'] = 'text';
-        $config['protocol']    = 'smtp';
-        $config['smtp_port']   =  587;
-        $config['smtp_host']   = 'smtp.qq.com';
-        $config['smtp_user']   = '525114969@qq.com';
-        $config['smtp_pass']   = 'cherish941026';
-        $this->load->library('email');
-        $this->email->initialize($config);
-
-        $this->email->from('525114969@qq.com', '来自猩猩的小队');
-        $this->email->to('sin_112233@163.com');
-        $this->email->cc('554659766@qq.com');
-       //$this->email->bcc('525114969@qq.com');
-        $this->email->subject('Email Test');
-        $this->email->message('message ');
-
-        var_dump( $this->email->send());
-        echo $this->email->print_debugger();
     }
 
 	//注销登陆

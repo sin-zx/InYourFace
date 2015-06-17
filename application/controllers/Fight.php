@@ -30,38 +30,35 @@ class Fight extends CI_Controller {
     function getlist(){
         $json=file_get_contents("php://input");
         if(!isset($json)){
-            $info= array('status' => 5);
-            echo json_encode($info);
+            $info= array('status' => 10000);
+            $arr['head'] = $info;
+            echo json_encode($arr);
             exit();
         }
-        $arr = array('status'=>201);
         $data = json_decode($json,true);
         $offset = $data['offset'];
         $district = $data['district'];
         $this->load->model('play_m');
         $list = $this->play_m->getlist($district,$offset);
         if(empty($list)){
-            $arr['status'] = 100;   //没有记录
+            $arr['head']['status'] = 100;   //没有记录
         }else{
-            $arr['status'] = 101;   //成功
-            $arr['offset'] = $offset + 20;
-            $i=0;
+            $arr['head']['status'] = 101;   //成功
+            $arr['head']['other'] = (string)($offset + 15);   //偏移量
             foreach($list as $zlist){
-
+                $n = array();
                 foreach($zlist as $key => $value){
-                    $arr[$i][$key] = json_decode($value);
+                    $n[$key] = $value;
                 }
-                $i =$i+1;
+                $arr['data'][] = $n;
             }
 
         }
-
+        $arr['head']['type'] = 6;
         echo json_encode($arr);
 
 
     }
-
-
     //获取场地信息列表
     function courtlist(){
         $json=file_get_contents("php://input");
@@ -77,19 +74,20 @@ class Fight extends CI_Controller {
         $this->load->model('play_m');
         $list = $this->play_m->getCourts($district,$offset);
         if(empty($list)){
-            $arr['status'] = 100;   //没有记录
+            $arr['head']['status'] = 100;   //没有记录
         }else{
-            $arr['status'] = 101;   //成功
-            $arr['offset'] = $offset + 15;
-            $i=0;
+            $arr['head']['status'] = 101;   //成功
+            $arr['head']['other'] = (string)($offset + 15);   //偏移量
             foreach($list as $zlist){
+                $n = array();
                 foreach($zlist as $key => $value){
-                    $arr[$i][$key] = $value;
+                    $n[$key] = $value;
                 }
-                $i =$i+1;
+                $arr['data'][] = $n;
             }
 
         }
+        $arr['head']['type'] = 3;
         echo json_encode($arr);
     }
 
@@ -99,14 +97,15 @@ class Fight extends CI_Controller {
         $this->load->model('play_m');
         $court = $this->play_m->getOneCourt($id);
         if(empty($court)){
-            $arr['status'] = 100;   //没有记录
+            $arr['head']['status'] = 100;   //没有记录
         }else{
 
             foreach($court[0] as $key => $value){
-                $arr[$key] = json_decode($value);
+                $arr['data'][$key] = json_decode($value);
             }
-            $arr['status'] = 101;   //成功
+            $arr['head']['status'] = 101;   //成功
         }
+        $arr['head']['type'] = 4;
         echo json_encode($arr);
     }
 

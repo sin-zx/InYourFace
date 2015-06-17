@@ -5,4 +5,5 @@
 {"id" : 4, "sex" : 1, "name" : "ABC队", "level": 2 ,"wintimes": 30},
 {"id" : 3, "sex" : 1, "name" : "WINWIN", "level": 4 ,"wintimes": 20},
 {"id" : 2, "sex" : 1, "name" : "HE2333", "level": 3 ,"wintimes": 10}
+
 ]

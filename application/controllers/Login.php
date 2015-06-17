@@ -95,9 +95,11 @@ class Login extends CI_Controller {
         }
         $this->load->model('user_m');
         $checklogin = $this->user_m->check_login($type,$name,$psw);
-        if($checklogin['other'] == 0){
-            $id = $this->user_m->getID($name,$type);
-            $checklogin['other'] = (string)$id;
+        if($checklogin['status'] == 101) {
+            if ($checklogin['other'] == 0) {
+                $id = $this->user_m->getID($name, $type);
+                $checklogin['other'] = (string)$id;
+            }
         }
         echo json_encode($checklogin);
     }

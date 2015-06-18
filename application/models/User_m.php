@@ -14,13 +14,13 @@
 			$query_name = $this->db->get_where('user_main', array('name' => $name));
 			$result1 = $query_name->result();
 			if(!empty($result1)){
-				return 103;
+				return 203;
 			}
             $query_email = $this->db->get_where('user_main', array('mail' => $email));
             $result2 = $query_email->result();
 
 			if(!empty($result2 )){
-				return 104;
+				return 204;
 			}
 			return 101;
 			
@@ -76,7 +76,7 @@
             $result = $query->result();
             
             if(empty($result)){
-            	$arr['status']=102;
+            	$arr['status']=205;
             }else{
             	$name = $result[0]->name;
 	            $psw = $result[0]->psw;
@@ -91,7 +91,7 @@
                     }
 
             	}else{
-            		$arr['status']=103;
+            		$arr['status']=206;
             	}
             }
             return $arr;

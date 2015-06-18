@@ -6,6 +6,10 @@ class Login extends CI_Controller {
 		{
 			parent::__construct();
             header('Content-type: application/json;charset=utf-8');   //设置数据格式为json
+            //初始化数据包：
+            $arr['head']['status'] = 101;   //状态码 默认成功
+            $arr['head']['other'] = '';     //附加字段
+            $arr['data'] = '';              //具体数据
 		}
 	function index()
 	{		
@@ -17,10 +21,10 @@ class Login extends CI_Controller {
 	function register(){
 		$json=file_get_contents("php://input");
 		if(!isset($json)){
-			$info= array('status' => 10000);
-            $arr['head'] = $info;
-			echo json_encode($arr);
-			exit();
+            $arr['head']['type'] = 0;
+            $arr['head']['status'] = 201;
+            echo json_encode($arr);
+            exit();
 		}
         $data  = json_decode($json,true);
 		$name=$data['name'];
@@ -31,13 +35,8 @@ class Login extends CI_Controller {
 		$checkinfo = $this->user_m->check_repeat($name,$email);
 		if($checkinfo==101){
 			if(!$this->user_m->register($data)){
-				$checkinfo=102;
+				$checkinfo=202;
 			}
-
-            //$this->load->library('encrypt');
-           // $encrypt_name = $this->encrypt->encode($name);  //对用户名加密后作为激活链接后缀
-            
-
             //发送邮件
             $encrypt_name=md5($name);
             $id = $this->user_m->getID($name);
@@ -46,40 +45,21 @@ class Login extends CI_Controller {
             $send_result = send_mailer($email,$link);
 
             if(!$send_result){
-                $checkinfo = 102;
+                $checkinfo = 202;
             }
         }
-		$info= array('status' => $checkinfo,'type'=>1);
-        $arr['head'] = $info;
+        $arr['head']['status'] = $checkinfo;
+        $arr['head']['type'] = 1;
 		echo json_encode($arr);
 	}
-
-
-    //接收激活邮箱请求
-    function checkemail($id,$nameA){
-        $this->load->model('user_m');
-        $result = $this->user_m->check_id($id);
-        if(empty($result)){
-            die("用户名不存在");
-        }
-
-        if($result[0]->isCheck == 1){
-            die('你已经激活！无需重复激活');
-        }
-        if(!$this->user_m->getcheck($id)){
-            echo '验证失败！服务器繁忙请稍后重试';
-        }else{
-            echo '验证成功！欢迎来到InYourFace！';
-        }
-    }
 
     //登陆
     function start()
     {
         $json=file_get_contents("php://input");
         if(!isset($json)){
-            $info= array('status' => 10000);
-            $arr['head'] = $info;
+            $arr['head']['type'] = 0;
+            $arr['head']['status'] = 201;
             echo json_encode($arr);
             exit();
         }
@@ -113,8 +93,27 @@ class Login extends CI_Controller {
         $psw=$data['psw'];
         $type=intval($data['type']);
         $this->load->model('user_m');
-        
+
     }
+
+    //接收激活邮箱请求
+    function checkemail($id,$nameA){
+        $this->load->model('user_m');
+        $result = $this->user_m->check_id($id);
+        if(empty($result)){
+            die("用户名不存在");
+        }
+
+        if($result[0]->isCheck == 1){
+            die('你已经激活！无需重复激活');
+        }
+        if(!$this->user_m->getcheck($id)){
+            echo '验证失败！服务器繁忙请稍后重试';
+        }else{
+            echo '验证成功！欢迎来到InYourFace！';
+        }
+    }
+
 
 	//注销登陆
 	function logout()

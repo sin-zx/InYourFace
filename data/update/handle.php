@@ -12,7 +12,8 @@
 		echo "<script>alert('标*号的信息填写不完整，请重新填写');history.go(-1);</script>";
 		exit();
 	}
-	$id = $medoo->insert("court_main", array("cname" => $cname));
+	$usingStatus = json_encode(array());
+	$id = $medoo->insert("court_main", array("cname" => $cname,'usingStatus'=>$usingStatus));
 	
 	if(empty($id)){
 		echo "<script>alert('添加失败！请重试');window.location.href='index.php';</script>";

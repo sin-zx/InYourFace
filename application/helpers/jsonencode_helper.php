@@ -21,3 +21,11 @@ function my_json_encode($value)
         return json_encode($value, JSON_UNESCAPED_UNICODE);
     }
 }
+
+function changestr($str){
+    $t1 = substr($str, 0,2);
+    $t2 = substr($str, 2,2);
+    $t3 = substr($str, 4,2);
+    $t4 = substr($str, 6,1);
+    return $t1.'-'.$t2.'-'.$t3.'-'.$t4;
+}

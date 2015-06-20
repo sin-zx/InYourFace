@@ -14,6 +14,14 @@
             }
             return $result[0]->id;
         }
+        function getcourtID($cname){
+            $query = $this->db->get_where('court_main', array('cname' => $cname));
+            $result = $query->result();
+            if(empty($result)){
+                return null;
+            }
+            return $result[0]->id;
+        }
        /* 测试用
         function addsome(){
             $user = array('testuser');
@@ -93,6 +101,7 @@
             $t2[] = intval(date('ymd').'0');
             $arr['choseTime<='] = my_json_encode($t1);
             $arr['choseTime>='] = my_json_encode($t2);
+            $this->db->order_by("id", "desc"); 
             $query = $this->db->get_where($database, $arr, $limit, $offset);
             return $query->result();
         }

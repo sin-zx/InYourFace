@@ -10,19 +10,21 @@ class Fight extends CI_Controller {
             $arr['head']['status'] = 101;   //状态码 默认成功
             $arr['head']['other'] = '';     //附加字段
             $arr['data'] = '';              //具体数据
+            $this->load->helper('jsonencode');
 		}
 	function index()
 	{		
 		//
 	}
-    /* test
+    
     function testadd(){
         $this->load->model('play_m');
-        $query =  $this->play_m->addsome();
-        if($query){
-            echo 'good';
+        for ($i=0; $i < 40; $i++) { 
+            $query =  $this->play_m->addsome();
         }
+        
     }
+    /* test
     function testjoin(){
         $this->load->model('play_m');
         $result = $this->play_m->join();
@@ -36,30 +38,62 @@ class Fight extends CI_Controller {
         if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
         }
         $data = json_decode($json,true);
-
         $listtype = $data['listtype'];
         $offset = $data['offset'];
         $district = $data['district'];
         $timescpoe = $data['timescpoe'];
         $rule = $data['rule'];
         $this->load->model('play_m');
-        $list = $this->play_m->getlist($district,$offset);
+        $list = $this->play_m->getlist($listtype,$district,$offset,$timescpoe,$rule);
         if(!empty($list)){
             $arr['head']['status'] = 101;   //成功
             $arr['head']['other'] = (string)($offset + 15);   //偏移量
+
             foreach($list as $zlist){
                 $n = array();
-                foreach($zlist as $key => $value){
-                    $n[$key] = $value;
-                }
+                $n['id'] = intval($zlist->id);
+                $n['name'] = json_decode($zlist->name,true);
+                $n['cnames'] = json_decode($zlist->cnames,true);
+                $n['choseTime'] = json_decode($zlist->choseTime,true);
+                $n['isChose'] = intval($zlist->isChose);
+                    $uname = $n['name'][0];
+                $t = intval($this->play_m->getuserID($uname));
+                $n['userids'] = array($t);
+                // foreach($zlist as $key => $value){
+                //     $n[$key] = $value;
+                // }
+                
                 $arr['data'][] = $n;
             }
+        }else{
+            $arr['head']['status'] = 207; 
         }
         $arr['head']['type'] = 6;
+        echo my_json_encode($arr);
+
+    }
+
+    //接受战贴
+    function callfight(){
+        $json=file_get_contents("php://input");
+        if(!isset($json)){
+            $arr['head']['type'] = 0;
+            $arr['head']['status'] = 201;
+            echo my_json_encode($arr);
+            exit();
+        }
+        $data = json_decode($json,true);
+        $name = $data['name'];
+        $fightID = $data['fightID'];  
+        $listtype = $data['listtype'];
+        $this->load->model('play_m');
+        $callstatus = $this->play_m->callfight($name,$fightID,$listtype);
+        $arr['head']['status'] = $callstatus;
+        $arr['head']['type'] = 7;
         echo json_encode($arr);
     }
 
@@ -69,7 +103,7 @@ class Fight extends CI_Controller {
         if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
         }
         $data = json_decode($json,true);
@@ -100,7 +134,7 @@ class Fight extends CI_Controller {
         if(!empty($court)){
 
             foreach($court[0] as $key => $value){
-                $arr['data'][$key] = json_decode($value);
+                $arr['data'][$key] = json_decode($value,true);
             }
             $arr['head']['status'] = 101;   //成功
         }
@@ -114,7 +148,7 @@ class Fight extends CI_Controller {
         if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
         }
         $data = json_decode($json,true);
@@ -122,13 +156,13 @@ class Fight extends CI_Controller {
         $courtID = $data['courtID'];
         $this->load->model('play_m');
         $n = $this->play_m->getUsingstatus($courtID);
-        $usingstatus = json_decode($n);     //得到场地所有已占用时间的数组
+        $usingstatus = json_decode($n,true);     //得到场地所有已占用时间的数组
 
         foreach($usingstatus as $str) {
             if( preg_match("/^".$whichday."+[1-9]{1}$/",$str) ){
                 $usedtime[] =  $str;
             }
-        }   //自此得到 当天 被占用 的时间段数组
+        }   //至此得到 当天 被占用 的时间段数组
 
         //提取出时间段对应的数字
         foreach ($usedtime as $v) {
@@ -139,7 +173,7 @@ class Fight extends CI_Controller {
         $result = json_encode($freetime);
         $arr['data'] = $result;
 
-        $arr['head']['type'] = 7;
+        $arr['head']['type'] = 8;
         echo json_encode($arr);
     }
 
@@ -150,18 +184,29 @@ class Fight extends CI_Controller {
         if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
         }
-        $arr = array('status'=>101);
         $data = json_decode($json,true);
-        $user = $data['user'];
+
+        $m_arr['listtype'] = $data['listtype']; 
+        $m_arr['name'] = $data['name']; 
+        $m_arr['district'] = $data['district'];
+        $m_arr['cnames']   = $data['cnames'];
+        $m_arr['choseTime'] = $data['choseTime'];
+        $m_arr['service'] = $data['service'];
+        $m_arr['rule'] = $data['rule'];
+        $this->load->model('play_m');
+        $setFight = $this->play_m->setFight($m_arr);
+        if($setFight){
+            $arr['head']['status'] = 101;
+        }else{
+            $arr['head']['status'] = 201;
+        }
+        $arr['head']['type'] = 5;
+        echo json_encode($arr);
 
     }
-
-
-
-
 
 
 }

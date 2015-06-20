@@ -10,6 +10,7 @@ class Login extends CI_Controller {
             $arr['head']['status'] = 101;   //状态码 默认成功
             $arr['head']['other'] = '';     //附加字段
             $arr['data'] = '';              //具体数据
+            $this->load->helper('jsonencode');
 		}
 	function index()
 	{		
@@ -23,7 +24,7 @@ class Login extends CI_Controller {
 		if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
 		}
         $data  = json_decode($json,true);
@@ -50,7 +51,7 @@ class Login extends CI_Controller {
         }
         $arr['head']['status'] = $checkinfo;
         $arr['head']['type'] = 1;
-		echo json_encode($arr);
+		echo my_json_encode($arr);
 	}
 
     //登陆
@@ -60,7 +61,7 @@ class Login extends CI_Controller {
         if(!isset($json)){
             $arr['head']['type'] = 0;
             $arr['head']['status'] = 201;
-            echo json_encode($arr);
+            echo my_json_encode($arr);
             exit();
         }
         $data  = json_decode($json,true);
@@ -83,7 +84,7 @@ class Login extends CI_Controller {
         }
         $checklogin['type'] = 2;
         $arr['head'] = $checklogin;
-        echo json_encode($arr);
+        echo my_json_encode($arr);
     }
 
     function resend_mail(){
@@ -101,17 +102,19 @@ class Login extends CI_Controller {
         $this->load->model('user_m');
         $result = $this->user_m->check_id($id);
         if(empty($result)){
-            die("用户名不存在");
+            echo "<script>alert('用户名不存在');、</script>";
+            exit();
         }
 
         if($result[0]->isCheck == 1){
-            die('你已经激活！无需重复激活');
+            echo "<script>alert('你已经激活！无需重复激活');、</script>";
+            exit();
         }
-        if(!$this->user_m->getcheck($id)){
-            echo '验证失败！服务器繁忙请稍后重试';
-        }else{
-            echo '验证成功！欢迎来到InYourFace！';
-        }
+        // if(!$this->user_m->getcheck($id)){
+        //     echo '验证失败！服务器繁忙请稍后重试';
+        // }else{
+            echo "<script>alert('验证成功！欢迎来到InYourFace！');、</script>";
+        //}
     }
 
 

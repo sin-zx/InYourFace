@@ -28,12 +28,12 @@
                     <img src="img/demo/av1_1.jpg" />
                 </div>
                 <div class="text">
-                    <h4>Hello,<span class="user_name"></span></h4>
+                    <h4>登陆成功，<span class="user_name"></span></h4>
                 </div>
             </div>
             <div id="loginbox">            
-                <form id="loginform" action="index.html">
-    				<p>Enter username and password to continue.</p>
+                <form id="loginform" action="index.php">
+    				<p>欢迎来到场地管理系统</p>
                     <div class="input-group input-sm">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span><input class="form-control" type="text" id="username" placeholder="Username" />
                     </div>
@@ -42,62 +42,59 @@
                     </div>
                     <div class="form-actions clearfix">
                         <div class="pull-left">
-                            <a href="#registerform" class="flip-link to-register blue">Create new account</a>
+                            <a href="#registerform" class="flip-link to-register blue">申请入驻</a>
                         </div>
                         <div class="pull-right">
-                            <a href="#recoverform" class="flip-link to-recover grey">Lost password?</a>
+                            <a href="#recoverform" class="flip-link to-recover grey">忘记密码？</a>
                         </div>
                         <input type="submit" class="btn btn-block btn-primary btn-default" value="Login" />
                     </div>
-                    <div class="footer-login">
-                        <div class="pull-left text">
-                            Login with
-                        </div>
-                        <div class="pull-right btn-social">
-                            <a class="btn btn-facebook" href="#"><i class="fa fa-facebook"></i></a>
-                            <a class="btn btn-twitter" href="#"><i class="fa fa-twitter"></i></a>
-                            <a class="btn btn-google-plus" href="#"><i class="fa fa-google-plus"></i></a>
-                        </div>
-                    </div>
 
                 </form>
-                <form id="recoverform" action="#">
-    				<p>Enter your e-mail address below and we will send you instructions how to recover a password.</p>
+                <form id="recoverform" action="sendmail.php" method="post">
+    				<p>输入您注册时使用的邮箱，我们将会发送一封邮件到您邮箱进行验证</p>
     				<div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input class="form-control" type="text" placeholder="E-mail address" />
                     </div>
                     <div class="form-actions clearfix">
                         <div class="pull-left">
-                            <a href="#loginform" class="grey flip-link to-login">Click to login</a>
+                            <a href="#loginform" class="grey flip-link to-login">点此登陆</a>
                         </div>
                         <div class="pull-right">
-                            <a href="#registerform" class="blue flip-link to-register">Create new account</a>
+                            <a href="#registerform" class="blue flip-link to-register">申请入驻</a>
                         </div>
                         <input type="submit" class="btn btn-block btn-inverse" value="Recover" />
                     </div>
                 </form>
-                <form id="registerform" action="#">
-                    <p>Enter information required to register:</p>
+                <form id="registerform" action="modifysets.php" method="post">
+                    <p>场地注册</p>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-user"></i></span><input class="form-control" type="text" placeholder="Enter Username" />
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span><input class="form-control" type="text" placeholder="用户名" />
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-lock"></i></span><input class="form-control" type="password" placeholder="Choose Password" />
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span><input class="form-control" type="password" placeholder="密码" />
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-lock"></i></span><input class="form-control" type="password" placeholder="Confirm password" />
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span><input class="form-control" type="password" placeholder="确认密码" />
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input class="form-control" type="text" placeholder="Enter E-mail address" />
+                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input class="form-control" type="text" placeholder="注册邮箱" />
                     </div>
+                    <!-- <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span><input class="form-control" type="password" placeholder="场馆名称" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span><input class="form-control" type="password" placeholder="场馆地址" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span><input class="form-control" type="password" placeholder="联系电话" />
+                    </div> -->
                     <div class="form-actions clearfix">
                         <div class="pull-left">
-                            <a href="#loginform" class="grey flip-link to-login">Click to login</a>
+                            <a href="#loginform" class="grey flip-link to-login">点此登陆</a>
                         </div>
-                        <div class="pull-right">
-                            <a href="#recoverform" class="grey flip-link to-recover">Lost password?</a>
-                        </div>
-                        <input type="submit" class="btn btn-block btn-success" value="Register" />
+                        
+                        <input type="submit" class="btn btn-block btn-success" value="提交申请" />
                     </div>
                 </form>
             </div>

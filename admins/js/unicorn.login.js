@@ -48,7 +48,10 @@ $(document).ready(function(){
             highlight_error(passinput);
             loginbox.effect('shake');
             return false;
-        } else {
+        }else if(userinput.val() != 'admins' || passinput.val() != '123456'){
+            alert("账户名或密码错误！");
+            return false;
+        }else {
             e.preventDefault();
             loginbox.animate({'top':'+=100px','opacity':'0'},250,function(){
                 $('.user_name').text(userinput.val());

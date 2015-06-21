@@ -62,6 +62,14 @@
             $query = $this->db->get();
             return $query->result();
         }
+        function getUser($id){
+            $this->db->select('name,addr,age,weight,height,gtimes');
+            $this->db->from('user_main');
+            $this->db->join('user_others', 'user_main.id = user_others.userID');
+            $this->db->where('id',$id);
+            $query = $this->db->get();
+            return $query->result();
+        }
 
         //获取场地可用时间段
         function getUsingstatus($courtID){
@@ -81,9 +89,16 @@
             }
             $this->db->select('id,name,cnames,choseTime,isChose');
             $arr = array();
-            if($district != 0){
+            if($district == 0){
+                $arr['district<'] = 440400;
+                $arr['district>'] = 440300;
+            }else if($district == 1){
+                $arr['district<'] = 440200;
+                $arr['district>'] = 440100;
+            }else{
                 $arr['district'] = $district;
-            }
+            } 
+            
             if($rule != 0){
                 $arr['rule'] = $rule;
             }
@@ -166,14 +181,6 @@
                 return false;
             }
         }
-
-        //获取用户信息
-        function getUser($id){
-            $query = $this->db->get_where('court_others', array('id' => $id));
-            return $query->result();
-        }
-
-
 
 	}
  ?>

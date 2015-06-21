@@ -157,6 +157,27 @@ class Fight extends CI_Controller
         $arr['head']['type'] = 4;
         echo my_json_encode($arr);
     }
+    //获取用户信息
+    function getUser($id)
+    {
+        $this->load->model('play_m');
+        $user = $this->play_m->getUser($id);
+        if (!empty($user)) {
+            
+            $arr['data']['id'] = intval($id);
+            $arr['data']['name'] = $user[0]->name;
+            $arr['data']['addr'] = $user[0]->addr;
+            $arr['data']['age'] = intval($user[0]->age);
+            $arr['data']['weight'] = intval($user[0]->weight);
+            $arr['data']['height'] = intval($user[0]->height);
+            $arr['data']['gtimes'] = intval($user[0]->gtimes);
+            $arr['head']['status'] = 101;   //成功
+        } else {
+            $arr['head']['status'] = 207;
+        }
+        $arr['head']['type'] = 9;
+        echo my_json_encode($arr);
+    }
 
     //获取场地某一天可用空位时间段
     function getFreetime()
